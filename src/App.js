@@ -6,38 +6,51 @@ import "./App.css";
 export default function App() {
   let [ready, setReady] = useState(false);
     let [weatherData, setWeatherData] = useState(null);
+    let [city, setCity] = useState("Nairobi");
 
 function showWeather(response){
   console.log(response.data)
   setWeatherData({
     temperature: Math.round(response.data.main.temp),
+    description: response.data.weather[0].description,
     maxTemperature: Math.round(response.data.main.temp_max),
     minTemperature: Math.round(response.data.main.temp_min),
     humidity: Math.round(response.data.main.humidity),
     wind: Math.round(response.data.wind.speed),
 feel: Math.round(response.data.main.feels_like),
-date: new Date(response.data.dt*1000)
+date: new Date(response.data.dt*1000),
+city: response.data.name
   })
   setReady(true);
 }
 
 function searchWeather(){
       const apiKey = "5f472b7acba333cd8a035ea85a0d4d4c";
-      let city = "Nairobi";
       const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
       axios.get(apiUrl).then(showWeather);
+}
+
+function handleSubmit(event){
+  event.preventDefault();
+  searchWeather();
+}
+
+function handleCity(event){
+  setCity(event.target.value);
+  
 }
 
 if(ready){
   return (
     <div className="App">
       <div className="container">
-        <form className="searchForm">
+        <form className="searchForm" onSubmit={handleSubmit}>
           <div>
             <input
               type="Search"
               placeholder="Search..."
               className="searchBar"
+              onChange={handleCity}
             />
           </div>
           <div>
@@ -48,17 +61,15 @@ if(ready){
         <div className="date">
           <FixDate date={weatherData.date} />
         </div>
-        <div className="country">ITALY</div>
-        <div className="city">Palermo</div>
+        <div className="city">{weatherData.city}</div>
         <hr className="cityMarker" />
-        <div className="todayForecast">
-          <div className="today">TODAY</div>
           <div className="forecastContainer">
             <div className="row">
               <div className="col-6">
                 <ul>
                   <li className="day">NOW</li>
-                  <li className="temperature">42°</li>
+                  <li className="temperature">{weatherData.temperature}°</li>
+                  <li className="description">{weatherData.description}</li>
                 </ul>
               </div>
               <div className="col-6">
@@ -99,7 +110,6 @@ if(ready){
               </div>
             </div>
           </div>
-        </div>
         <div className="weekForecast">
           <div className="week">THIS WEEK</div>
           <div className="weekForecastContainer"></div>
