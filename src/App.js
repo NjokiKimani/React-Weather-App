@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import axios from "axios";
 import FixDate from "./FixDate";
 import "./App.css";
+import Forecast from "./Forecast";
 
 export default function App() {
   let [ready, setReady] = useState(false);
@@ -11,6 +12,7 @@ export default function App() {
 function showWeather(response){
   console.log(response.data)
   setWeatherData({
+    coordinates: response.data.coord,
     temperature: Math.round(response.data.main.temp),
     description: response.data.weather[0].description,
     maxTemperature: Math.round(response.data.main.temp_max),
@@ -112,7 +114,9 @@ if(ready){
           </div>
         <div className="weekForecast">
           <div className="week">THIS WEEK</div>
-          <div className="weekForecastContainer"></div>
+          <div className="weekForecastContainer">
+            <Forecast coordinates={weatherData.coordinates}/>
+          </div>
         </div>
       </div>
     </div>
